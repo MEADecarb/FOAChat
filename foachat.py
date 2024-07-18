@@ -1,68 +1,66 @@
 import streamlit as st
-import PyPDF2
 import google.generativeai as genai
-from google.api_core import retry
+from PyPDF2 import PdfReader
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configure Gemini API
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+genai.configure(api_key=st.secrets["gemini"]["api_key"])
 
-def read_pdf(file):
-  pdf_reader = PyPDF2.PdfReader(file)
+def extract_text_from_pdf(pdf_file):
+  reader = PdfReader(pdf_file)
   text = ""
-  for page in pdf_reader.pages:
+  for page in reader.pages:
       text += page.extract_text()
   return text
 
-@retry.Retry()
-def analyze_document(document, reference):
+def analyze_document(document_text, reference_text):
   model = genai.GenerativeModel('gemini-pro')
   prompt = f"""
-  Analyze the following document and compare it to the reference document. 
-  Determine if the document conforms with the intent and legal requirements specified in the reference.
+  Analyze the following document and compare it to the reference text. 
+  Determine if the document conforms with the intent and law described in the reference text.
   
-  Reference document:
-  {reference}
+  Reference text:
+  {reference_text}
   
   Document to analyze:
-  {document}
+  {document_text}
   
-  Provide a detailed analysis including:
-  1. Whether the document conforms with the intent of the reference
-  2. Any legal compliance issues or discrepancies
-  3. Suggestions for improvement or alignment
+  Provide a detailed analysis, including:
+  1. Whether the document conforms with the intent of the reference text
+  2. Any discrepancies or areas of non-compliance
+  3. Suggestions for improvement
   """
   response = model.generate_content(prompt)
   return response.text
 
-def main():
-  st.title("Document Compliance Analyzer")
+st.title("Document Compliance Analyzer")
 
-  # Upload reference PDF
-  st.header("Upload Reference Document")
-  reference_file = st.file_uploader("Choose a reference PDF file", type="pdf")
-  
-  if reference_file is not None:
-      reference_text = read_pdf(reference_file)
-      st.success("Reference document uploaded successfully!")
+# Upload reference PDF
+reference_pdf = st.file_uploader("Upload reference PDF (intent and law)", type="pdf")
 
-      # Upload documents to analyze
-      st.header("Upload Documents to Analyze")
-      uploaded_files = st.file_uploader("Choose documents to analyze", type=["pdf", "txt"], accept_multiple_files=True)
+if reference_pdf is not None:
+  reference_text = extract_text_from_pdf(reference_pdf)
+  st.success("Reference PDF uploaded successfully!")
 
-      if uploaded_files:
-          for uploaded_file in uploaded_files:
-              st.subheader(f"Analyzing: {uploaded_file.name}")
-              
-              if uploaded_file.type == "application/pdf":
-                  document_text = read_pdf(uploaded_file)
-              else:  # Assume it's a text file
-                  document_text = uploaded_file.getvalue().decode("utf-8")
-              
-              if st.button(f"Analyze {uploaded_file.name}"):
-                  with st.spinner("Analyzing document..."):
-                      analysis = analyze_document(document_text, reference_text)
-                      st.write(analysis)
+  # Upload multiple documents to analyze
+  uploaded_files = st.file_uploader("Upload documents to analyze", type=["pdf", "txt"], accept_multiple_files=True)
 
-if __name__ == "__main__":
-  main()
+  if uploaded_files:
+      for uploaded_file in uploaded_files:
+          st.write(f"Analyzing: {uploaded_file.name}")
+          
+          if uploaded_file.type == "application/pdf":
+              document_text = extract_text_from_pdf(uploaded_file)
+          else:
+              document_text = uploaded_file.getvalue().decode("utf-8")
+          
+          analysis = analyze_document(document_text, reference_text)
+          st.write(analysis)
+          st.markdown("---")
+
+else:
+  st.warning("Please upload a reference PDF first.")
