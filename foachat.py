@@ -41,7 +41,15 @@ def extract_text_from_pdf(file):
 def analyze_document(document, reference_text):
     doc_text = extract_text_from_pdf(document) if document.type == "application/pdf" else document.getvalue().decode("utf-8")
 
-    # Use Gemini to analyze the document
+    # Perform checklist verification
+    results = []
+    for item in checklist:
+        if item.lower() in doc_text.lower():
+            results.append((item, "Yes"))
+        else:
+            results.append((item, "No"))
+
+    # Use Gemini to provide supporting evidence
     model = genai.GenerativeModel('gemini-pro')
     prompt = f"""
     Analyze the following document against the reference law and intent:
@@ -53,10 +61,18 @@ def analyze_document(document, reference_text):
     {reference_text}
 
     Determine if the document conforms with the intent and law from the reference. 
-    Provide a detailed analysis and explanation.
+    Provide supporting evidence for each checklist item.
     """
     response = model.generate_content(prompt)
-    return response.text
+    supporting_evidence = response.text
+
+    return results, supporting_evidence
+
+def calculate_grade(results):
+    total_items = len(results)
+    passed_items = sum(1 for result in results if result[1] == "Yes")
+    grade = (passed_items / total_items) * 100
+    return grade
 
 st.title("Document Compliance Analyzer")
 
@@ -71,8 +87,15 @@ if reference_pdf and uploaded_files:
     if st.button("Analyze Documents"):
         for uploaded_file in uploaded_files:
             st.write(f"Analyzing: {uploaded_file.name}")
-            analysis = analyze_document(uploaded_file, reference_text)
-            st.write(analysis)
+            results, supporting_evidence = analyze_document(uploaded_file, reference_text)
+            
+            for item, result in results:
+                st.write(f"{item}: {result}")
+                st.write(f"Supporting evidence: {supporting_evidence}")
+                st.divider()
+            
+            grade = calculate_grade(results)
+            st.write(f"Final Grade: {grade:.2f}%")
             st.divider()
 else:
     st.write("Please upload both a reference PDF and at least one document to analyze.")
