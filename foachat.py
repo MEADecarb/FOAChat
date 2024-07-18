@@ -1,6 +1,8 @@
 import streamlit as st
 import google.generativeai as genai
 import PyPDF2
+import pandas as pd
+from io import StringIO
 
 # Configure Gemini API
 genai.configure(api_key=st.secrets["gemini"]["api_key"])
@@ -74,6 +76,14 @@ def calculate_grade(results):
     grade = (passed_items / total_items) * 100
     return grade
 
+def create_csv(results, grade):
+    df = pd.DataFrame(results, columns=["Checklist Item", "Compliance"])
+    df["Supporting Evidence"] = [""] * len(df)
+    df.loc[0, "Supporting Evidence"] = supporting_evidence  # Add supporting evidence to the first row
+    df["Grade"] = [grade] + [""] * (len(df) - 1)
+    csv = df.to_csv(index=False)
+    return csv
+
 st.title("Document Compliance Analyzer")
 
 st.markdown("""
@@ -100,6 +110,13 @@ if reference_pdf and uploaded_files:
             
             grade = calculate_grade(results)
             st.write(f"Final Grade: {grade:.2f}%")
+            csv = create_csv(results, grade)
+            st.download_button(
+                label="Download Results as CSV",
+                data=csv,
+                file_name="compliance_results.csv",
+                mime="text/csv"
+            )
             st.divider()
 else:
     st.write("Please upload both a reference PDF and at least one document to analyze.")
