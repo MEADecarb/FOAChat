@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as GenAI
+import google.generativeai as genai
 import PyPDF2
 
 # Configure Gemini API
