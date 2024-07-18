@@ -24,13 +24,6 @@ checklist = [
     "3.10 Limitations on the offer of a grant, including the amount for an individual grant or the number of grants an applicant may receive",
     "3.11 Evaluation process",
     "3.12 Other information the Administration determines is appropriate",
-    "4. The Administration may modify a FOA by publishing a notice of the modified provision on its website no less than 10 business days prior to the application deadline and effective date of the modified provision.",
-    "5. The Administration shall review each complete application received using any method described in the FOA.",
-    "6. After review of a complete application, the Administration may take any of the following actions: Offer a grant, Offer a partial grant, Hold the application for further consideration during the same fiscal year, Hold the application for further consideration in a succeeding fiscal year, Reject the application.",
-    "7. The Administration may reject an application if: The application is not a complete application, The application is inconsistent with law, For a competitive funding opportunity, the Administration has not selected the application for a grant, The Administration determines that sufficient funding is not available, The Director of the Administration determines that offering a grant is not in the best interest of the State.",
-    "8. The Administration shall provide written notice of the action taken under §B of this regulation within 30 days, and, if the application is rejected, the basis for the action taken under §C of this regulation.",
-    "9. For reconsideration of an action by the Administration under §B or C of this regulation, the applicant shall submit a written request to the Administration within 14 business days of receiving the written notice under §D of this regulation.",
-    "10. The written decision by the Director, or the Director’s designee, on the request for reconsideration shall be the final decision of the Administration."
 ]
 
 # Reference text directly from COMAR 14.26.02
