@@ -9,6 +9,7 @@ genai.configure(api_key=st.secrets["gemini"]["api_key"])
 
 # Numbered checklist based on Section 14.26.02.04 and Section 14.26.02.05
 checklist = [
+    "1. The Administration shall publish on its website a FOA for each grant offered by the Administration.",
     "2. Each initial FOA shall include an application period of at least 30 calendar days.",
     "3. Each FOA shall explain each of the following when applicable:",
     "3.1 Name and purpose",
@@ -88,17 +89,10 @@ def analyze_document(document, reference_text):
 
     return results, supporting_evidence
 
-def calculate_grade(results):
-    total_items = len(results)
-    passed_items = sum(1 for result in results if result[1] == "Yes")
-    grade = (passed_items / total_items) * 100
-    return grade
-
-def create_csv(results, grade, supporting_evidence):
+def create_csv(results, supporting_evidence):
     df = pd.DataFrame(results, columns=["Checklist Item", "Compliance"])
     df["Supporting Evidence"] = [""] * len(df)
     df.loc[0, "Supporting Evidence"] = supporting_evidence  # Add supporting evidence to the first row
-    df["Grade"] = [grade] + [""] * (len(df) - 1)
     csv = df.to_csv(index=False)
     return csv
 
@@ -117,15 +111,13 @@ if uploaded_files:
             st.write(f"Analyzing: {uploaded_file.name}")
             results, supporting_evidence = analyze_document(uploaded_file, reference_text)
             
-            grade = calculate_grade(results)
-            st.write(f"Final Grade: {grade:.2f}%")
-
+            st.write(f"Supporting evidence: {supporting_evidence}")
+            
             for item, result in results:
                 st.write(f"{item}: {result}")
-                st.write(f"Supporting evidence: {supporting_evidence}")
                 st.divider()
             
-            csv = create_csv(results, grade, supporting_evidence)
+            csv = create_csv(results, supporting_evidence)
             st.download_button(
                 label="Download Results as CSV",
                 data=csv,
