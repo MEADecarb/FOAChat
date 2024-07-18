@@ -76,6 +76,10 @@ def calculate_grade(results):
 
 st.title("Document Compliance Analyzer")
 
+st.markdown("""
+For more information on the related regulations and requirements, you can refer to the [COMAR 14.26.02 - Green Building Tax Credit Program](https://github.com/MEADecarb/FOAChat/blob/main/COMAR%2014.26.02%20%20Green%20Building%20Tax%20Credit%20Program.md).
+""")
+
 # Upload reference PDF
 reference_pdf = st.file_uploader("Upload reference PDF (law and intent)", type="pdf")
 
