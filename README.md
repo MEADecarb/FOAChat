@@ -1,7 +1,3 @@
-Sure! Below is a detailed and user-friendly README file for your GitHub repository, explaining everything from setup to security considerations.
-
----
-
 # Document Compliance Analyzer
 
 Welcome to the Document Compliance Analyzer! This tool helps you verify if your documents comply with specific legal requirements by analyzing them against a reference document. The application uses Streamlit for the user interface and Google Generative AI for advanced text analysis.
