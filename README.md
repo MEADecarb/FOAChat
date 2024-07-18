@@ -1,6 +1,10 @@
 # Document Compliance Analyzer
 
-Welcome to the Document Compliance Analyzer! This tool helps you verify if your documents comply with specific legal requirements by analyzing them against a reference document. The application uses Streamlit for the user interface and Google Generative AI for advanced text analysis.
+Welcome to the FOA Document Compliance Analyzer! This tool helps you verify if your documents comply with specific legal requirements by analyzing them against a reference document. The application uses Streamlit for the user interface and Google Generative AI for advanced text analysis. The model is trained on [COMAR 14.26.02 (2024)](https://github.com/MEADecarb/FOAChat/blob/main/COMAR%2014.26.02%20%20Green%20Building%20Tax%20Credit%20Program.md).
+
+
+[Document Compliance Analyzer Application](https://foachat-dgfkxcc5krd8euggnowlkg.streamlit.app/)
+
 
 ## Table of Contents
 
@@ -15,7 +19,7 @@ Welcome to the Document Compliance Analyzer! This tool helps you verify if your 
 
 ## Overview
 
-The Document Compliance Analyzer allows you to upload a reference PDF containing legal requirements and multiple documents you want to analyze. The application will check each document against a checklist of requirements and provide a detailed report with supporting evidence and a final compliance grade.
+The FOA Document Compliance Analyzer allows you to upload a reference PDF containing legal requirements and multiple documents you want to analyze. The application will check each document against a checklist of requirements and provide a detailed report with supporting evidence and a final compliance grade.
 
 ## Features
 
@@ -92,7 +96,7 @@ Follow these steps to set up the Document Compliance Analyzer on your local mach
 
 ## Security Considerations
 
-Your data's security and privacy are important to us. Here’s how we ensure it:
+Your data's security and privacy are important here are the cybersecruity features:
 
 1. **Local Processing**
 
@@ -132,6 +136,3 @@ We welcome contributions from the community! If you’d like to contribute, plea
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
----
-
-Thank you for using the Document Compliance Analyzer! We hope this tool helps you ensure your documents meet all required legal standards. If you have any feedback or suggestions, please let us know.
