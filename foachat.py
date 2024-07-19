@@ -37,6 +37,25 @@ checklist = [
     "3.12 Other information the Administration determines is appropriate",
 ]
 
+# Reference text directly from COMAR 14.26.02
+reference_text = """
+COMAR 14.26.02 - Green Building Tax Credit Program:
+2. Each initial FOA shall include an application period of at least 30 calendar days.
+3. Each FOA shall explain each of the following when applicable:
+   3.1 Name and purpose
+   3.2 Duration and schedule
+   3.3 Requirements
+   3.4 Deadlines
+   3.5 Anticipated funding amount at the time the FOA is published
+   3.6 Designation as a competitive or a noncompetitive grant
+   3.7 Evaluation criteria
+   3.8 Method for determining a grant amount under the FOA and whether an amount other than the requested amount may be offered
+   3.9 The required form and manner in which to submit a complete application
+   3.10 Limitations on the offer of a grant, including the amount for an individual grant or the number of grants an applicant may receive
+   3.11 Evaluation process
+   3.12 Other information the Administration determines is appropriate
+"""
+
 def extract_text_from_pdf(file):
     pdf_reader = PyPDF2.PdfReader(file)
     text = ""
@@ -44,7 +63,7 @@ def extract_text_from_pdf(file):
         text += page.extract_text()
     return text
 
-def analyze_document(document):
+def analyze_document(document, reference_text):
     doc_text = extract_text_from_pdf(document) if document.type == "application/pdf" else document.getvalue().decode("utf-8")
 
     # Perform checklist verification
@@ -55,15 +74,21 @@ def analyze_document(document):
         else:
             results.append((item, "No"))
 
-    # Use Gemini to provide supporting evidence and summary statement
+    # Use Gemini to provide supporting evidence
     model = genai.GenerativeModel('gemini-pro')
     prompt = f"""
-    Analyze the following document:
+    Analyze the following document against the reference law and intent:
 
     Document to analyze:
     {doc_text}
 
-    Based on the checklist items, determine if the document complies and provide supporting evidence for each item. Also, suggest overall improvements for the document.
+    Reference law and intent:
+    {reference_text}
+
+    Determine if the document conforms with the intent and law from the reference. 
+    Provide supporting evidence for each checklist item.
+
+    Additionally, provide an overall summary statement about suggested improvements for the document.
     """
     response = model.generate_content(prompt)
     supporting_evidence = response.text
@@ -93,7 +118,7 @@ if uploaded_files:
     if st.button("Analyze Documents") and api_key:
         for uploaded_file in uploaded_files:
             st.write(f"Analyzing: {uploaded_file.name}")
-            results, supporting_evidence, summary_statement = analyze_document(uploaded_file)
+            results, supporting_evidence, summary_statement = analyze_document(uploaded_file, reference_text)
             
             st.write(f"Supporting evidence: {supporting_evidence}")
             st.write(f"Summary statement: {summary_statement}")
