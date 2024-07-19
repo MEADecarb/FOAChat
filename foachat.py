@@ -3,8 +3,6 @@ import google.generativeai as genai
 import PyPDF2
 import pandas as pd
 from io import StringIO
-from docx import Document
-from docx.shared import Pt
 
 # Title and description
 st.title("FOA Document Compliance Analyzer")
@@ -106,28 +104,13 @@ def analyze_document(document, reference_text):
 
     return results, supporting_evidence_formatted, summary_statement
 
-def create_doc(results, supporting_evidence, summary_statement):
-    doc = Document()
-    doc.add_heading("Compliance Analysis Results", level=1)
-
-    doc.add_heading("Supporting Evidence", level=2)
-    doc.add_paragraph(supporting_evidence)
-
-    doc.add_heading("Checklist", level=2)
-    for item, result in results:
-        p = doc.add_paragraph()
-        p.add_run(f"{item}\n").bold = True
-        p.add_run(f"{result}\n")
-
-    doc.add_heading("Overall Summary Statement", level=2)
-    doc.add_paragraph(summary_statement)
-
-    # Save the document to a BytesIO object
-    doc_stream = StringIO()
-    doc.save(doc_stream)
-    doc_stream.seek(0)
-
-    return doc_stream
+def create_csv(results, supporting_evidence, summary_statement):
+    df = pd.DataFrame(results, columns=["Checklist Item", "Compliance"])
+    df["Supporting Evidence"] = [""] * len(df)
+    df.loc[0, "Supporting Evidence"] = supporting_evidence  # Add supporting evidence to the first row
+    df["Summary Statement"] = summary_statement
+    csv = df.to_csv(index=False)
+    return csv
 
 # Upload documents to analyze
 uploaded_files = st.file_uploader("Upload documents to analyze", type=["txt", "pdf"], accept_multiple_files=True)
@@ -145,12 +128,12 @@ if uploaded_files:
                 st.write(f"{item}: {result}")
                 st.divider()
             
-            doc_stream = create_doc(results, supporting_evidence, summary_statement)
+            csv = create_csv(results, supporting_evidence, summary_statement)
             st.download_button(
-                label="Download Results as DOCX",
-                data=doc_stream,
-                file_name="compliance_results.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                label="Download Results as CSV",
+                data=csv,
+                file_name="compliance_results.csv",
+                mime="text/csv"
             )
             st.divider()
     elif not api_key:
