@@ -20,6 +20,7 @@ if api_key:
 
 # Numbered checklist based on Section 14.26.02.04 and Section 14.26.02.05
 checklist = [
+    "1. The Administration shall publish on its website a FOA for each grant offered by the Administration.",
     "2. Each initial FOA shall include an application period of at least 30 calendar days.",
     "3. Each FOA shall explain each of the following when applicable:",
     "3.1 Name and purpose",
@@ -86,16 +87,27 @@ def analyze_document(document, reference_text):
 
     Determine if the document conforms with the intent and law from the reference. 
     Provide supporting evidence for each checklist item.
+
+    Additionally, provide an overall summary statement about suggested improvements for the document.
     """
     response = model.generate_content(prompt)
     supporting_evidence = response.text
 
-    return results, supporting_evidence
+    # Extract the summary statement from the response
+    summary_start = supporting_evidence.find("Summary:")
+    if summary_start != -1:
+        summary_statement = supporting_evidence[summary_start:]
+        supporting_evidence = supporting_evidence[:summary_start].strip()
+    else:
+        summary_statement = "No summary provided."
 
-def create_csv(results, supporting_evidence):
+    return results, supporting_evidence, summary_statement
+
+def create_csv(results, supporting_evidence, summary_statement):
     df = pd.DataFrame(results, columns=["Checklist Item", "Compliance"])
     df["Supporting Evidence"] = [""] * len(df)
     df.loc[0, "Supporting Evidence"] = supporting_evidence  # Add supporting evidence to the first row
+    df["Summary Statement"] = summary_statement
     csv = df.to_csv(index=False)
     return csv
 
@@ -106,15 +118,16 @@ if uploaded_files:
     if st.button("Analyze Documents") and api_key:
         for uploaded_file in uploaded_files:
             st.write(f"Analyzing: {uploaded_file.name}")
-            results, supporting_evidence = analyze_document(uploaded_file, reference_text)
+            results, supporting_evidence, summary_statement = analyze_document(uploaded_file, reference_text)
             
             st.write(f"Supporting evidence: {supporting_evidence}")
+            st.write(f"Summary statement: {summary_statement}")
             
             for item, result in results:
                 st.write(f"{item}: {result}")
                 st.divider()
             
-            csv = create_csv(results, supporting_evidence)
+            csv = create_csv(results, supporting_evidence, summary_statement)
             st.download_button(
                 label="Download Results as CSV",
                 data=csv,
