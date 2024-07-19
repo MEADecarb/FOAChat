@@ -10,6 +10,10 @@ st.markdown("""
 For more information on the related regulations and requirements, you can refer to [COMAR 14.26.02 - Green Building Tax Credit Program](https://github.com/MEADecarb/FOAChat/blob/main/COMAR%2014.26.02%20%20Green%20Building%20Tax%20Credit%20Program.md).
 """)
 
+st.markdown("""
+For more details on MD's DoIT AI guidelines, you can refer to [Interim General AI Guidance](https://doit.maryland.gov/policies/Pages/InterimGenAIGuidance.aspx).
+""")
+
 # Prompt user to input their Gemini API key
 api_key = st.text_input("Enter your Gemini API key", type="password")
 st.markdown("[Get an API key with your Google Account](https://ai.google.dev/gemini-api/docs/api-key)")
