@@ -121,16 +121,12 @@ if uploaded_files:
             st.write(f"Analyzing: {uploaded_file.name}")
             results, supporting_evidence, summary_statement = analyze_document(uploaded_file, reference_text)
             
-            st.write("Supporting evidence: Document Conformance Checklist")
-            st.write("Requirement\tDocument Conforms\tEvidence")
-            for item, result in results:
-                if result == "Yes":
-                    st.write(f"{item.split('. ', 1)[1]}\t{result}\tDocument specifies...")
-                else:
-                    st.write(f"{item.split('. ', 1)[1]}\t{result}")
-                st.divider()
+            st.write(f"Supporting evidence:\n{supporting_evidence}")
+            st.write(f"{summary_statement}")
             
-            st.write(f"**Overall Summary Statement**\n\n{summary_statement}")
+            for item, result in results:
+                st.write(f"{item}: {result}")
+                st.divider()
             
             csv = create_csv(results, supporting_evidence, summary_statement)
             st.download_button(
