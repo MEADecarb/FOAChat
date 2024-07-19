@@ -2,6 +2,10 @@
 
 Welcome to the FOA Document Compliance Analyzer! This tool helps you verify if your documents comply with specific legal requirements by analyzing them against a reference document. The application uses Streamlit for the user interface and Google Generative AI for advanced text analysis. The model is trained on [COMAR 14.26.02 (2024)](https://github.com/MEADecarb/FOAChat/blob/main/COMAR%2014.26.02%20%20Green%20Building%20Tax%20Credit%20Program.md)
 
+For Additional information about MD DoIT's AI Guidance please refer to [Interim General AI Guidance](https://doit.maryland.gov/policies/Pages/InterimGenAIGuidance.aspx).
+""")
+
+
 [FOA Document Compliance Analyzer Application](https://foachat-dgfkxcc5krd8euggnowlkg.streamlit.app/)
 
 ## Table of Contents
